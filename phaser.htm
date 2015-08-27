@@ -13,19 +13,79 @@
 
     window.onload = function() {
 
-        var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create });
+        var game = new Phaser.Game(800, 600, Phaser.AUTO, 'Phaser-example', { preload: preload, create: create, update: update, render: render });
+        var cursors;
+        var platforms;
+        var player
 
         function preload () {
 
-            game.load.image('logo', 'phaser.png');
-
+            game.load.image('sky', 'assets/sky.png');
+            game.load.image('star', 'assets/star.png');
+            game.load.image('ground', 'assets/platform.png');
+            game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+            game.stage.backgroundColor = '#007236';
         }
 
         function create () {
 
-            var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
-            logo.anchor.setTo(0.5, 0.5);
+          game.world.x = 0;
+          game.world.y = 0;
+          game.world.resize(800, 600);
 
+          game.physics.startSystem(Phaser.Physics.ARCADE);
+
+          player = game.add.sprite(32, game.world.height - 150, 'dude');
+
+          game.add.sprite(0, 0, 'sky');
+
+          game.add.sprite(0, 0, 'star');
+
+          platforms = game.add.group();
+          platforms.enableBody = true;
+
+          var ground = platforms.create(0, game.world.height - 64, 'ground');
+
+          ground.scale.setTo(2, 2);
+
+          ground.body.immovable = true;
+
+          var ledge = platforms.create(400, 400, 'ground');
+
+          ledge.body.immovable = true;
+          ledge = platforms.create(-150, 250, 'ground');
+          ledge.body.immovable = true;
+         /* var logo = game.add.sprite(game.world.centerX, game.world.centerY, 'x-logo');
+          logo.anchor.setTo(0.5, 0.5);
+          game.world.resize(2000, 50);
+          game.world.position.x = 0;
+          game.world.position.y = 0;
+
+          game.add.text(600, 800, "- phaser -", { font: "32px Arial", fill: "#330088", align: "center" });*/
+          cursors = game.input.keyboard.createCursorKeys();
+        }
+
+        function update() {
+          if (cursors.up.isDown)
+          {
+            game.camera.y -= 4;
+          }
+          else if (cursors.down.isDown)
+          {
+            game.camera.y += 4;
+          }
+          else if (cursors.left.isDown)
+          {
+            game.camera.x -= 4;
+          }
+          else if (cursors.right.isDown)
+          {
+            game.camera.x += 4;
+          }
+        }
+
+        function render() {
+          game.debug.cameraInfo(game.camera, 32, 32);
         }
 
     };
